@@ -7,10 +7,10 @@ resource "aws_vpc" "vpc_1" {
 }
 
 resource "aws_subnet" "subnet_pb1" {
-  vpc_id                   = aws_vpc.vpc_1.id
-  cidr_block               = "10.0.0.0/24"
-  availability_zone        = "us-west-1a"
-  map_public_ip_on_launch  = true
+  vpc_id                  = aws_vpc.vpc_1.id
+  cidr_block              = "10.0.0.0/24"
+  availability_zone       = "us-west-1a"
+  map_public_ip_on_launch = true
 }
 
 resource "aws_subnet" "subnet_pv1" {
@@ -20,10 +20,10 @@ resource "aws_subnet" "subnet_pv1" {
 }
 
 resource "aws_subnet" "subnet_pb2" {
-  vpc_id                   = aws_vpc.vpc_1.id
-  cidr_block               = "10.0.2.0/24"
-  availability_zone        = "us-west-1b"
-  map_public_ip_on_launch  = true
+  vpc_id                  = aws_vpc.vpc_1.id
+  cidr_block              = "10.0.2.0/24"
+  availability_zone       = "us-west-1b"
+  map_public_ip_on_launch = true
 }
 
 resource "aws_subnet" "subnet_pv2" {
@@ -60,7 +60,7 @@ resource "aws_route_table" "private_rt" {
   vpc_id = aws_vpc.vpc_1.id
 
   route {
-    cidr_block    = "0.0.0.0/0"
+    cidr_block     = "0.0.0.0/0"
     nat_gateway_id = aws_nat_gateway.nat_gw.id
   }
 }
@@ -152,10 +152,10 @@ resource "aws_eks_cluster" "eks_cluster" {
   role_arn = aws_iam_role.eks_cluster_role.arn
 
   vpc_config {
-    subnet_ids               = [aws_subnet.subnet_pv1.id, aws_subnet.subnet_pv2.id]
-    security_group_ids       = [aws_security_group.eks_cluster_sg.id]
-    endpoint_public_access   = true
-    endpoint_private_access  = true
+    subnet_ids              = [aws_subnet.subnet_pv1.id, aws_subnet.subnet_pv2.id]
+    security_group_ids      = [aws_security_group.eks_cluster_sg.id]
+    endpoint_public_access  = true
+    endpoint_private_access = true
   }
 
   depends_on = [
@@ -235,5 +235,5 @@ resource "aws_eks_node_group" "node_group" {
   }
 
   instance_types = ["t3.medium"]
-  depends_on      = [aws_eks_cluster.eks_cluster]
+  depends_on     = [aws_eks_cluster.eks_cluster]
 }
