@@ -1,3 +1,4 @@
+#Terraform to create VPC, EKS architecture
 provider "aws" {
   region = "us-west-1"
 }
