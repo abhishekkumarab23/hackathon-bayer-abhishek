@@ -1,5 +1,5 @@
 FROM node:18-alpine
-WORKDIR 
+WORKDIR /app
 COPY package*.json ./
 RUN npm ci --only=production
 COPY ./docker/patient-service.js ./patient-service.js
