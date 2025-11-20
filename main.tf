@@ -3,33 +3,39 @@ provider "aws" {
 }
 
 resource "aws_vpc" "vpc_1" {
-    cidr_block = var.cidr
+  cidr_block = var.cidr
 }
+
 resource "aws_subnet" "subnet_pb1" {
-    vpc_id     = aws_vpc.vpc_1.id
-    cidr_block = "10.0.0.0/24"
-    availability_zone = "us-west-1a"
-    map_public_ip_on_launch = true
+  vpc_id                   = aws_vpc.vpc_1.id
+  cidr_block               = "10.0.0.0/24"
+  availability_zone        = "us-west-1a"
+  map_public_ip_on_launch  = true
 }
+
 resource "aws_subnet" "subnet_pv1" {
-    vpc_id     = aws_vpc.vpc_1.id
-    cidr_block = "10.0.1.0/24"
-    availability_zone = "us-west-1a"
+  vpc_id            = aws_vpc.vpc_1.id
+  cidr_block        = "10.0.1.0/24"
+  availability_zone = "us-west-1a"
 }
+
 resource "aws_subnet" "subnet_pb2" {
-    vpc_id     = aws_vpc.vpc_1.id
-    cidr_block = "10.0.2.0/24"
-    availability_zone = "us-west-1b"
-    map_public_ip_on_launch = true
+  vpc_id                   = aws_vpc.vpc_1.id
+  cidr_block               = "10.0.2.0/24"
+  availability_zone        = "us-west-1b"
+  map_public_ip_on_launch  = true
 }
+
 resource "aws_subnet" "subnet_pv2" {
-    vpc_id     = aws_vpc.vpc_1.id
-    cidr_block = "10.0.3.0/24"
-    availability_zone = "us-west-1b"
+  vpc_id            = aws_vpc.vpc_1.id
+  cidr_block        = "10.0.3.0/24"
+  availability_zone = "us-west-1b"
 }
+
 resource "aws_internet_gateway" "igw_1" {
-    vpc_id = aws_vpc.vpc_1.id
+  vpc_id = aws_vpc.vpc_1.id
 }
+
 resource "aws_eip" "nat_eip" {
   tags = {
     Name = "nat-eip"
@@ -38,8 +44,9 @@ resource "aws_eip" "nat_eip" {
 
 resource "aws_nat_gateway" "nat_gw" {
   allocation_id = aws_eip.nat_eip.id
-  subnet_id     = aws_subnet.subnet_pb1.id   
+  subnet_id     = aws_subnet.subnet_pb1.id
 }
+
 resource "aws_route_table" "RT" {
   vpc_id = aws_vpc.vpc_1.id
 
@@ -48,26 +55,31 @@ resource "aws_route_table" "RT" {
     gateway_id = aws_internet_gateway.igw_1.id
   }
 }
+
 resource "aws_route_table" "private_rt" {
   vpc_id = aws_vpc.vpc_1.id
 
   route {
-    cidr_block = "0.0.0.0/0"
+    cidr_block    = "0.0.0.0/0"
     nat_gateway_id = aws_nat_gateway.nat_gw.id
   }
 }
+
 resource "aws_route_table_association" "a1" {
   subnet_id      = aws_subnet.subnet_pb1.id
   route_table_id = aws_route_table.RT.id
 }
+
 resource "aws_route_table_association" "a2" {
   subnet_id      = aws_subnet.subnet_pb2.id
   route_table_id = aws_route_table.RT.id
 }
+
 resource "aws_route_table_association" "a3" {
   subnet_id      = aws_subnet.subnet_pv1.id
   route_table_id = aws_route_table.private_rt.id
 }
+
 resource "aws_route_table_association" "a4" {
   subnet_id      = aws_subnet.subnet_pv2.id
   route_table_id = aws_route_table.private_rt.id
@@ -84,6 +96,7 @@ resource "aws_security_group" "webSg" {
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
+
   ingress {
     description = "SSH"
     from_port   = 22
@@ -103,6 +116,7 @@ resource "aws_security_group" "webSg" {
     Name = "hackathon-sg"
   }
 }
+
 resource "aws_security_group" "eks_cluster_sg" {
   name        = "hackathon-eks-cluster-sg"
   description = "Control plane security group"
@@ -125,12 +139,12 @@ resource "aws_security_group" "eks_cluster_sg" {
 }
 
 resource "aws_ecr_repository" "ecr" {
-    name                 = "hackathon-repo"
-    image_tag_mutability = "MUTABLE"
-    
-    tags = {
-        Environment = "Dev"
-    }
+  name                 = "hackathon-repo"
+  image_tag_mutability = "MUTABLE"
+
+  tags = {
+    Environment = "Dev"
+  }
 }
 
 resource "aws_eks_cluster" "eks_cluster" {
@@ -138,10 +152,10 @@ resource "aws_eks_cluster" "eks_cluster" {
   role_arn = aws_iam_role.eks_cluster_role.arn
 
   vpc_config {
-    subnet_ids         = [aws_subnet.subnet_pv1.id, aws_subnet.subnet_pv2.id]
-    security_group_ids = [aws_security_group.eks_cluster_sg.id]
-    endpoint_public_access = true
-    endpoint_private_access = true
+    subnet_ids               = [aws_subnet.subnet_pv1.id, aws_subnet.subnet_pv2.id]
+    security_group_ids       = [aws_security_group.eks_cluster_sg.id]
+    endpoint_public_access   = true
+    endpoint_private_access  = true
   }
 
   depends_on = [
@@ -149,9 +163,11 @@ resource "aws_eks_cluster" "eks_cluster" {
     aws_iam_role_policy_attachment.eks_cluster_AmazonEKSServicePolicy,
   ]
 }
+
 data "aws_iam_policy_document" "eks_cluster_assume_role" {
   statement {
     actions = ["sts:AssumeRole"]
+
     principals {
       type        = "Service"
       identifiers = ["eks.amazonaws.com"]
@@ -162,6 +178,7 @@ data "aws_iam_policy_document" "eks_cluster_assume_role" {
 data "aws_iam_policy_document" "eks_node_assume_role" {
   statement {
     actions = ["sts:AssumeRole"]
+
     principals {
       type        = "Service"
       identifiers = ["ec2.amazonaws.com"]
@@ -218,8 +235,5 @@ resource "aws_eks_node_group" "node_group" {
   }
 
   instance_types = ["t3.medium"]
-  depends_on = [aws_eks_cluster.eks_cluster]
+  depends_on      = [aws_eks_cluster.eks_cluster]
 }
-
-
-
