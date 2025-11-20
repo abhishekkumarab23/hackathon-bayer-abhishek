@@ -1,0 +1,48 @@
+name: terraform fmt and validate
+on:
+  pull_request:
+    paths:
+      - '**/*.tf'
+      - '**/*.tfvars'
+  push:
+    branches:
+      - main
+    paths:
+      - '**/*.tf'
+      - '**/*.tfvars'
+
+Jobs:
+  terraform_action:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4 
+
+    - name: Setup Terraform
+       uses: hashicorp/setup-terraform@v3
+       
+    - name: Initialize Terraform
+      if: github.event_name == "pull_request"
+      run: terraform init
+      
+    - name: Terraform FMT
+      if: github.event_name == "pull_request"
+      run: terraform fmt -check -recursive
+
+    - name: Terraform Validate
+      if: github.event_name == "pull_request"
+      run: terraform validate
+    - name: Terraform Plan
+      if: github.event_name == "pull_request"
+      run: terraform plan
+# Merge
+    - name: Initialize Terraform
+      if: github.event_name == "push"
+      run: terraform init
+      - name: Terraform Apply
+      if: github.event_name == "push"
+      run: terraform apply
+    
+     
+      
