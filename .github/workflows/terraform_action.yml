@@ -1,48 +1,79 @@
-name: terraform fmt and validate
+name: Terraform CICD
+
 on:
   pull_request:
     paths:
-      - '**/*.tf'
-      - '**/*.tfvars'
+      - "**/*.tf"
+      - "**/*.tfvars"
   push:
     branches:
       - main
     paths:
-      - '**/*.tf'
-      - '**/*.tfvars'
+      - "**/*.tf"
+      - "**/*.tfvars"
 
-Jobs:
+jobs:
+
   terraform_action:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4 
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Setup Terraform
-       uses: hashicorp/setup-terraform@v3
-       
-    - name: Initialize Terraform
-      if: github.event_name == "pull_request"
-      run: terraform init
-      
-    - name: Terraform FMT
-      if: github.event_name == "pull_request"
-      run: terraform fmt -check -recursive
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
 
-    - name: Terraform Validate
-      if: github.event_name == "pull_request"
-      run: terraform validate
-    - name: Terraform Plan
-      if: github.event_name == "pull_request"
-      run: terraform plan
-# Merge
-    - name: Initialize Terraform
-      if: github.event_name == "push"
-      run: terraform init
+      - name: Initialize Terraform
+        if: github.event_name == 'pull_request'
+        run: terraform init
+
+      - name: Terraform FMT
+        if: github.event_name == 'pull_request'
+        run: terraform fmt -check -recursive
+
+      - name: Terraform Validate
+        if: github.event_name == 'pull_request'
+        run: terraform validate
+
+      - name: Terraform Plan
+        if: github.event_name == 'pull_request'
+        run: terraform plan
+
+      - name: Initialize Terraform
+        if: github.event_name == 'push'
+        run: terraform init
+
       - name: Terraform Apply
-      if: github.event_name == "push"
-      run: terraform apply
-    
-     
-      
+        if: github.event_name == 'push'
+        run: terraform apply -auto-approve
+
+
+  Build_and_Push_Docker_Image_to_ECR:
+    runs-on: ubuntu-latest
+    needs: terraform_action
+    if: github.event_name == 'push'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-south-1
+
+      - name: Login to ECR
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build and Push Appointment Image
+        run: |
+          docker build -f docker/Dockerfile.appointment -t ${{ secrets.ECR_REGISTRY }}/appointment:${{ github.sha }} .
+          docker push ${{ secrets.ECR_REGISTRY }}/appointment:${{ github.sha }}
+
+      - name: Build and Push Patient Image
+        run: |
+          docker build -f docker/Dockerfile.patient -t ${{ secrets.ECR_REGISTRY }}/patient:${{ github.sha }} .
+          docker push ${{ secrets.ECR_REGISTRY }}/patient:${{ github.sha }}
