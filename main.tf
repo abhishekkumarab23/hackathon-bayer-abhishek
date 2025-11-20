@@ -1,4 +1,3 @@
-#Terraform for VPC, EKS Arch
 provider "aws" {
   region = "us-west-1"
 }
