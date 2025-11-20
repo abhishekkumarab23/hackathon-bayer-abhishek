@@ -1,8 +1,9 @@
 name: terraform fmt and validate
 on:
   pull_request:
-    branches:
-      - main
+    paths:
+      - '**/*.tf'
+      - '**/*.tfvars'
 
 Jobs:
   fmt_and_validate:
@@ -13,10 +14,8 @@ Jobs:
       uses: actions/checkout@v4 
 
     - name: Setup Terraform
-       uses: hashicorp/setup-terraform@v2
-       with:
-         terraform_version: '1.5.7'
-         
+       uses: hashicorp/setup-terraform@v3
+       
     - name: Initialize Terraform
       run: terraform init
       
