@@ -49,7 +49,10 @@ jobs:
       - name: Initialize Terraform
         if: github.event_name == 'push'
         run: terraform init
-
+      - name: Terraform FMT
+        if: github.event_name == 'push'
+        run: terraform fmt -check -recursive
+        
       - name: Terraform Apply
         if: github.event_name == 'push'
         run: terraform apply -auto-approve
