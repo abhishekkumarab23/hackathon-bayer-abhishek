@@ -80,12 +80,12 @@ jobs:
       - name: Build and Push Appointment Image
         run: |
           docker build -f docker/Dockerfile.appointment -t ${{ secrets.ECR_REGISTRY }}:${{ github.sha }} .
-          docker push ${{ secrets.ECR_REGISTRY }}/appointment:${{ github.sha }}
+          docker push ${{ secrets.ECR_REGISTRY }}:${{ github.sha }}
 
       - name: Build and Push Patient Image
         run: |
           docker build -f docker/Dockerfile.patient -t ${{ secrets.ECR_REGISTRY }}:${{ github.sha }} .
-          docker push ${{ secrets.ECR_REGISTRY }}/patient:${{ github.sha }}
+          docker push ${{ secrets.ECR_REGISTRY }}:${{ github.sha }}
           
       - name: Configure kubectl for EKS
         run: |
