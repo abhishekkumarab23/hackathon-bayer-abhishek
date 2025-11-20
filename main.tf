@@ -22,14 +22,14 @@ resource "aws_subnet" "subnet_pv1" {
 resource "aws_subnet" "subnet_pb2" {
   vpc_id                  = aws_vpc.vpc_1.id
   cidr_block              = "10.0.2.0/24"
-  availability_zone       = "us-west-1b"
+  availability_zone       = "us-west-1c"
   map_public_ip_on_launch = true
 }
 
 resource "aws_subnet" "subnet_pv2" {
   vpc_id            = aws_vpc.vpc_1.id
   cidr_block        = "10.0.3.0/24"
-  availability_zone = "us-west-1b"
+  availability_zone = "us-west-1c"
 }
 
 resource "aws_internet_gateway" "igw_1" {
