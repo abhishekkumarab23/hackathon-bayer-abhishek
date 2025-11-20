@@ -98,3 +98,7 @@ jobs:
         run: |
           kubectl set image deployment/patient-deployment patient=${{ secrets.ECR_REGISTRY }}:patient-${{ github.sha }}
           kubectl set image deployment/appointment-deployment appointment=${{ secrets.ECR_REGISTRY }}:appointment-${{ github.sha }}
+      - name: Verify Deployments
+        run: |
+          kubectl rollout status deployment/patient-deployment
+          kubectl rollout status deployment/appointment-deployment

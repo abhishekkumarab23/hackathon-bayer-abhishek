@@ -1,4 +1,4 @@
-#Terraform configuration for AWS VPC, Subnets, EKS Cluster, and related resources.
+#Terraform configuration for AWS VPC, Subnets, EKS Cluster, and related resources
 provider "aws" {
   region = "us-west-1"
 }
