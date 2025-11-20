@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: appointment-deployment
+  labels:
+    app: appointment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: appointment
+  template:
+    metadata:
+      labels:
+        app: appointment
+    spec:
+      containers:
+      - name: appointment
+        image: 539935451710.dkr.ecr.us-west-1.amazonaws.com/hackathon-repo/patient:latest/appointment:latest
+        ports:
+        - containerPort: 8080

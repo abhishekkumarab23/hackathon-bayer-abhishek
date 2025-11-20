@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: patient-deployment
+  labels:
+    app: patient
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: patient
+  template:
+    metadata:
+      labels:
+        app: patient
+    spec:
+      containers:
+      - name: patient
+        image: 539935451710.dkr.ecr.us-west-1.amazonaws.com/hackathon-repo/patient:latest
+        ports:
+        - containerPort: 8081
