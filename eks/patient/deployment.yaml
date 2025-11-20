@@ -16,6 +16,6 @@ spec:
     spec:
       containers:
       - name: patient
-        image: 539935451710.dkr.ecr.us-west-1.amazonaws.com/hackathon-repo/patient:latest
+        image: 539935451710.dkr.ecr.us-west-1.amazonaws.com/hackathon-repo:patient-latest
         ports:
         - containerPort: 8081

@@ -79,13 +79,13 @@ jobs:
 
       - name: Build and Push Appointment Image
         run: |
-          docker build -f docker/Dockerfile.appointment -t ${{ secrets.ECR_REGISTRY }}:${{ github.sha }} .
-          docker push ${{ secrets.ECR_REGISTRY }}:${{ github.sha }}
+          docker build -f docker/Dockerfile.appointment -t ${{ secrets.ECR_REGISTRY }}:appointment-${{ github.sha }} .
+          docker push ${{ secrets.ECR_REGISTRY }}:appointment-${{ github.sha }} 
 
       - name: Build and Push Patient Image
         run: |
-          docker build -f docker/Dockerfile.patient -t ${{ secrets.ECR_REGISTRY }}:${{ github.sha }} .
-          docker push ${{ secrets.ECR_REGISTRY }}:${{ github.sha }}
+          docker build -f docker/Dockerfile.patient -t ${{ secrets.ECR_REGISTRY }}:patient-${{ github.sha }} .
+          docker push ${{ secrets.ECR_REGISTRY }}:patient-${{ github.sha }}
           
       - name: Configure kubectl for EKS
         run: |
@@ -96,5 +96,5 @@ jobs:
           kubectl apply -R -f eks/
       - name: Deploy to EKS
         run: |
-          kubectl set image deployment/patient patient=${{ secrets.ECR_REGISTRY }}/patient:${{ github.sha }}
-          kubectl set image deployment/appointment appointment=${{ secrets.ECR_REGISTRY }}/appointment:${{ github.sha }}
+          kubectl set image deployment/patient-deployment patient=${{ secrets.ECR_REGISTRY }}:patient-${{ github.sha }}
+          kubectl set image deployment/appointment-deployment appointment=${{ secrets.ECR_REGISTRY }}:appointment-${{ github.sha }}

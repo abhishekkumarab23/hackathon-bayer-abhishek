@@ -16,6 +16,6 @@ spec:
     spec:
       containers:
       - name: appointment
-        image: 539935451710.dkr.ecr.us-west-1.amazonaws.com/hackathon-repo/patient:latest/appointment:latest
+        image: 539935451710.dkr.ecr.us-west-1.amazonaws.com/hackathon-repo:appointment-latest
         ports:
         - containerPort: 8080
