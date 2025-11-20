@@ -1,5 +1,5 @@
 FROM node:18-alpine
 WORKDIR /app
-COPY ./appointment-service.js .
+COPY ./docker/appointment-service.js .
 EXPOSE 3000 3001
 CMD ["npm", "start"] 
