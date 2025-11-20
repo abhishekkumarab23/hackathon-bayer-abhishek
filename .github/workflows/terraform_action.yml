@@ -1,5 +1,4 @@
 name: Terraform CICD
-
 on:
   pull_request:
     paths:
@@ -11,7 +10,7 @@ on:
     paths:
       - "**/*.tf"
       - "**/*.tfvars"
-
+      
 jobs:
 
   terraform_action:
