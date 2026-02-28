@@ -4,3 +4,4 @@ testing the file
 third line
 squash and merge. fourth line
 fifth line
+soxth line
